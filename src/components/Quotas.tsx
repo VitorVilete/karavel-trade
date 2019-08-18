@@ -77,7 +77,7 @@ export default class Quotas extends Component<Props, State> {
             <Box>
                 <FormControl>
                     <InputLabel htmlFor="select-multiple">Name</InputLabel>
-                    <Select value={base} onChange={this.handleChange}>
+                    <Select value={base} onChange={this.handleChange.bind(this)}>
                         {this.renderMenuItems()}
                     </Select>
                 </FormControl>

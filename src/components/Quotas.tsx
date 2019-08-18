@@ -4,6 +4,7 @@ import { Quota } from '../entities/Quota';
 import { Paper, FormControl, InputLabel, Select, MenuItem, Box } from '@material-ui/core';
 import { Rate } from '../entities/Rate';
 import SortableTable from './SortableTable';
+import Cards from './Cards';
 
 interface Props {
     base: string;
@@ -81,6 +82,7 @@ export default class Quotas extends Component<Props, State> {
                         {this.renderMenuItems()}
                     </Select>
                 </FormControl>
+                {base && quotas && <Cards data={quotas.rates} header={Quotas.headRows} />}
 
                 <Paper>{base && quotas && <SortableTable data={quotas.rates} header={Quotas.headRows} />}</Paper>
             </Box>

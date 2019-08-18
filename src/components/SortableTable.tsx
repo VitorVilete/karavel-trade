@@ -73,7 +73,9 @@ export default class SortableTable extends Component<Props, State> {
     render(): JSX.Element {
         return (
             <Table>
-                <TableHead>{this.renderTableHeaderRows()}</TableHead>
+                <TableHead>
+                    <TableRow>{this.renderTableHeaderRows()}</TableRow>
+                </TableHead>
                 <TableBody>{this.renderTableRows()}</TableBody>
             </Table>
         );

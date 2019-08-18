@@ -1,20 +1,9 @@
 import React, { Component } from 'react';
 import { HttpService } from '../shared/HttpService';
 import { Quota } from '../entities/Quota';
-import {
-    Paper,
-    Table,
-    TableHead,
-    TableRow,
-    TableCell,
-    TableBody,
-    FormControl,
-    InputLabel,
-    Select,
-    MenuItem,
-    Box,
-} from '@material-ui/core';
+import { Paper, FormControl, InputLabel, Select, MenuItem, Box } from '@material-ui/core';
 import { Rate } from '../entities/Rate';
+import SortableTable from './SortableTable';
 
 interface Props {
     base: string;
@@ -36,12 +25,12 @@ export default class Quotas extends Component<Props, State> {
 
     static GET_QUOTAS_URL = 'latest';
     static headRows = [
-        { id: 'name', numeric: false, disablePadding: true, label: 'Coin' },
+        { id: 'coin', numeric: false, disablePadding: true, label: 'Coin' },
         { id: 'value', numeric: true, disablePadding: false, label: 'Quota' },
     ];
 
     findQuota(base?: string): void {
-        const endpoint = `${base ? Quotas.GET_QUOTAS_URL + `?base=` + base : Quotas.GET_QUOTAS_URL}`;
+        const endpoint = `${Quotas.GET_QUOTAS_URL + `?base=` + base}`;
         HttpService.get(`${endpoint}`).then(res => {
             const data = res.data;
             const rates = Object.entries(data.rates);
@@ -59,7 +48,7 @@ export default class Quotas extends Component<Props, State> {
     }
 
     componentDidMount(): void {
-        this.findQuota();
+        this.findQuota(this.state.base);
     }
 
     handleChange(event: React.ChangeEvent<{ value: unknown }>): void {
@@ -82,43 +71,18 @@ export default class Quotas extends Component<Props, State> {
         });
     }
 
-    renderTableRows(): JSX.Element[] {
-        const quotas = this.state.quotas;
-        return quotas.rates.map((row, i) => {
-            return (
-                <TableRow key={i}>
-                    <TableCell component="th" scope="row">
-                        {row.coin}
-                    </TableCell>
-                    <TableCell align="right">{row.value}</TableCell>
-                </TableRow>
-            );
-        });
-    }
-
     render(): JSX.Element {
-        const { base } = this.state;
+        const { base, quotas } = this.state;
         return (
             <Box>
-                <form autoComplete="off">
-                    <FormControl>
-                        <InputLabel htmlFor="select-multiple">Name</InputLabel>
-                        <Select value={base} onChange={this.handleChange}>
-                            {this.renderMenuItems()}
-                        </Select>
-                    </FormControl>
-                </form>
-                <Paper>
-                    <Table>
-                        <TableHead>
-                            <TableRow>
-                                <TableCell>Coin</TableCell>
-                                <TableCell align="right">Value</TableCell>
-                            </TableRow>
-                        </TableHead>
-                        <TableBody>{this.renderTableRows()}</TableBody>
-                    </Table>
-                </Paper>
+                <FormControl>
+                    <InputLabel htmlFor="select-multiple">Name</InputLabel>
+                    <Select value={base} onChange={this.handleChange}>
+                        {this.renderMenuItems()}
+                    </Select>
+                </FormControl>
+
+                <Paper>{base && quotas && <SortableTable data={quotas.rates} header={Quotas.headRows} />}</Paper>
             </Box>
         );
     }

@@ -17,8 +17,8 @@ export default class Cards extends Component<Props, State> {
 
     card(element: any, i: number, header: Header[]): JSX.Element {
         return (
-            <Grid item xs={12} sm={6} md={4}>
-                <Card key={i}>
+            <Grid item xs={12} sm={6} md={4} key={i}>
+                <Card>
                     <CardContent>
                         {header.map((column, k) => (
                             <Fragment key={k}>

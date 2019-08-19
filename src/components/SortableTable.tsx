@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import { TableBody, Table, TableHead, TableCell, TableSortLabel, TableRow } from '@material-ui/core';
+import orderBy from 'lodash/orderBy';
 
 // TODO Implement sorting
 interface Props {
@@ -22,7 +23,7 @@ interface State {
 
 export default class SortableTable extends Component<Props, State> {
     static defaultProps = {
-        columnToSort: 'id',
+        columnToSort: '',
         sortDirection: 'desc',
     };
     state: State = {
@@ -42,6 +43,10 @@ export default class SortableTable extends Component<Props, State> {
         return sortDirection === 'asc' ? 'desc' : 'asc';
     }
 
+    getSortDirection(direction: string): 'desc' | 'asc'{
+        return direction === 'desc' ? 'desc' : 'asc';
+    }
+
     row(row: any, i: number, header: Header[]): JSX.Element {
         return (
             <TableRow key={i}>
@@ -54,29 +59,30 @@ export default class SortableTable extends Component<Props, State> {
         );
     }
 
-    renderTableHeaderRows(): JSX.Element[] {
-        const header = this.props.header;
+    renderTableHeaderRows(header:Header[]): JSX.Element[] {
         return header.map((column, i) => (
             <TableCell key={i} align={column.numeric ? 'right' : 'left'}>
-                <TableSortLabel>{column.label}</TableSortLabel>
+                <TableSortLabel><div onClick={() => this.handleSort(column.id)}>{column.label}</div></TableSortLabel>
             </TableCell>
         ));
     }
 
-    renderTableRows(): JSX.Element[] {
-        const { data, header } = this.props;
+    renderTableRows(data:Array<object>, header:Header[]): JSX.Element[] {        
         return data.map((row: any, i: number) => {
             return this.row(row, i, header);
         });
     }
 
     render(): JSX.Element {
+        const {columnToSort, sortDirection} = this.state;
+        const { data, header} = this.props;
+        console.log(columnToSort, sortDirection)
         return (
             <Table>
                 <TableHead>
-                    <TableRow>{this.renderTableHeaderRows()}</TableRow>
+                    <TableRow>{this.renderTableHeaderRows(header)}</TableRow>
                 </TableHead>
-                <TableBody>{this.renderTableRows()}</TableBody>
+                <TableBody>{this.renderTableRows(orderBy(data,columnToSort,this.getSortDirection(sortDirection)), header)}</TableBody>
             </Table>
         );
     }

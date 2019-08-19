@@ -1,5 +1,5 @@
 import React, { Component, Fragment } from 'react';
-import { Card, CardContent, Typography, CardActions, Button, Paper, Grid, GridList } from '@material-ui/core';
+import { Card, CardContent, Typography, Grid } from '@material-ui/core';
 
 interface Props {
     data: any;

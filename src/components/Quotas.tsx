@@ -11,12 +11,10 @@ import {
     Checkbox,
     FormControlLabel,
     Grid,
-    Container,
 } from '@material-ui/core';
 import { Rate } from '../entities/Rate';
 import SortableTable from './SortableTable';
 import Cards from './Cards';
-
 interface Props {
     base: string;
 }
@@ -92,12 +90,24 @@ export default class Quotas extends Component<Props, State> {
         });
     }
 
+    getRatesWithFlags(rates: Rate[]): Rate[]{
+        let newRates: Rate[] =  new Array<Rate>();
+        let copiedRates: Rate[] = [ ...rates ]
+        copiedRates.forEach(copiedRate => {
+            copiedRate.coin = '<span class="flag-icon flag-icon-'+copiedRate.coin.substring(0,2).toLowerCase()+'"></span>'+copiedRate.coin
+            
+            newRates.push(copiedRate)
+        });
+        return newRates
+    }
+
     render(): JSX.Element {
         const { base, quotas, isGridView } = this.state;
         return (
             <Box>
                 <Grid container spacing={3} justify="space-between">
                         <Grid item xs={12} sm={6} md={4}>
+                        
                         <FormControl>
                             <InputLabel>Name</InputLabel>
                             <Select value={base} onChange={this.handleChange.bind(this)}>
@@ -125,9 +135,9 @@ export default class Quotas extends Component<Props, State> {
                 </Grid>
                 <Paper>
                     {base && quotas && isGridView ? (
-                        <Cards data={quotas.rates} header={Quotas.headRows} />
+                        <Cards data={this.getRatesWithFlags(quotas.rates)} header={Quotas.headRows} />
                     ) : (
-                        <SortableTable data={quotas.rates} header={Quotas.headRows} />
+                        <SortableTable data={this.getRatesWithFlags(quotas.rates)} header={Quotas.headRows} />
                     )}
                 </Paper>
             </Box>

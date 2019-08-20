@@ -43,7 +43,7 @@ export default class SortableTable extends Component<Props, State> {
         return sortDirection === 'asc' ? 'desc' : 'asc';
     }
 
-    getSortDirection(direction: string): 'desc' | 'asc'{
+    getSortDirection(direction: string): 'desc' | 'asc' {
         return direction === 'desc' ? 'desc' : 'asc';
     }
 
@@ -59,30 +59,40 @@ export default class SortableTable extends Component<Props, State> {
         );
     }
 
-    renderTableHeaderRows(header:Header[]): JSX.Element[] {
+    renderTableHeaderRows(header: Header[], columnToSort: string, sortDirection: string): JSX.Element[] {
         return header.map((column, i) => (
             <TableCell key={i} align={column.numeric ? 'right' : 'left'}>
-                <TableSortLabel><div onClick={() => this.handleSort(column.id)}>{column.label}</div></TableSortLabel>
+                <TableSortLabel active={columnToSort === column.id} direction={this.getSortDirection(sortDirection)}>
+                    <div
+                        onClick={(): void => {
+                            return this.handleSort(column.id);
+                        }}
+                    >
+                        {column.label}
+                    </div>
+                </TableSortLabel>
             </TableCell>
         ));
     }
 
-    renderTableRows(data:Array<object>, header:Header[]): JSX.Element[] {        
+    renderTableRows(data: Array<object>, header: Header[]): JSX.Element[] {
         return data.map((row: any, i: number) => {
             return this.row(row, i, header);
         });
     }
 
     render(): JSX.Element {
-        const {columnToSort, sortDirection} = this.state;
-        const { data, header} = this.props;
-        console.log(columnToSort, sortDirection)
+        const { columnToSort, sortDirection } = this.state;
+        const { data, header } = this.props;
+        console.log(columnToSort, sortDirection);
         return (
             <Table>
                 <TableHead>
-                    <TableRow>{this.renderTableHeaderRows(header)}</TableRow>
+                    <TableRow>{this.renderTableHeaderRows(header, columnToSort, sortDirection)}</TableRow>
                 </TableHead>
-                <TableBody>{this.renderTableRows(orderBy(data,columnToSort,this.getSortDirection(sortDirection)), header)}</TableBody>
+                <TableBody>
+                    {this.renderTableRows(orderBy(data, columnToSort, this.getSortDirection(sortDirection)), header)}
+                </TableBody>
             </Table>
         );
     }

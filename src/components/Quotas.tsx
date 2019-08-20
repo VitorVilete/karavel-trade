@@ -1,7 +1,18 @@
 import React, { Component } from 'react';
 import { HttpService } from '../shared/HttpService';
 import { Quota } from '../entities/Quota';
-import { Paper, FormControl, InputLabel, Select, MenuItem, Box } from '@material-ui/core';
+import {
+    Paper,
+    FormControl,
+    InputLabel,
+    Select,
+    MenuItem,
+    Box,
+    Checkbox,
+    FormControlLabel,
+    Grid,
+    Container,
+} from '@material-ui/core';
 import { Rate } from '../entities/Rate';
 import SortableTable from './SortableTable';
 import Cards from './Cards';
@@ -12,12 +23,14 @@ interface Props {
 interface State {
     quotas: Quota;
     base: string;
+    isGridView: boolean;
 }
 
 export default class Quotas extends Component<Props, State> {
     state: State = {
         quotas: new Quota(),
         base: this.props.base,
+        isGridView: true,
     };
 
     static defaultProps = {
@@ -52,6 +65,7 @@ export default class Quotas extends Component<Props, State> {
         this.findQuota(this.state.base);
     }
 
+    // TODO: Refactor handleChange to remove the findQuota call
     handleChange(event: React.ChangeEvent<{ value: unknown }>): void {
         this.setState(
             {
@@ -59,6 +73,12 @@ export default class Quotas extends Component<Props, State> {
             },
             () => this.findQuota(this.state.base),
         );
+    }
+
+    handleCheckboxChange(event: React.ChangeEvent<HTMLInputElement>): void {
+        this.setState({
+            isGridView: event.target.checked,
+        });
     }
 
     renderMenuItems(): JSX.Element[] {
@@ -73,18 +93,41 @@ export default class Quotas extends Component<Props, State> {
     }
 
     render(): JSX.Element {
-        const { base, quotas } = this.state;
+        const { base, quotas, isGridView } = this.state;
         return (
             <Box>
-                <FormControl>
-                    <InputLabel htmlFor="select-multiple">Name</InputLabel>
-                    <Select value={base} onChange={this.handleChange.bind(this)}>
-                        {this.renderMenuItems()}
-                    </Select>
-                </FormControl>
-                {base && quotas && <Cards data={quotas.rates} header={Quotas.headRows} />}
-
-                <Paper>{base && quotas && <SortableTable data={quotas.rates} header={Quotas.headRows} />}</Paper>
+                <Grid container spacing={3}>
+                    <FormControl>
+                        <Grid item xs={12} sm={6} md={4}>
+                            <InputLabel htmlFor="select-multiple">Name</InputLabel>
+                            <Select value={base} onChange={this.handleChange.bind(this)}>
+                                {this.renderMenuItems()}
+                            </Select>
+                        </Grid>
+                        <Grid item xs={12} sm={6} md={4}>
+                            <FormControlLabel
+                                control={
+                                    <Checkbox
+                                        checked={isGridView}
+                                        onChange={this.handleCheckboxChange.bind(this)}
+                                        value="isGridView"
+                                        inputProps={{
+                                            'aria-label': 'primary checkbox',
+                                        }}
+                                    />
+                                }
+                                label="Grid View"
+                            />
+                        </Grid>
+                    </FormControl>
+                </Grid>
+                <Paper>
+                    {base && quotas && isGridView ? (
+                        <Cards data={quotas.rates} header={Quotas.headRows} />
+                    ) : (
+                        <SortableTable data={quotas.rates} header={Quotas.headRows} />
+                    )}
+                </Paper>
             </Box>
         );
     }

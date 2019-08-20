@@ -30,7 +30,7 @@ export default class Quotas extends Component<Props, State> {
     state: State = {
         quotas: new Quota(),
         base: this.props.base,
-        isGridView: true,
+        isGridView: false,
     };
 
     static defaultProps = {
@@ -96,15 +96,17 @@ export default class Quotas extends Component<Props, State> {
         const { base, quotas, isGridView } = this.state;
         return (
             <Box>
-                <Grid container spacing={3}>
-                    <FormControl>
+                <Grid container spacing={3} justify="space-between">
                         <Grid item xs={12} sm={6} md={4}>
-                            <InputLabel htmlFor="select-multiple">Name</InputLabel>
+                        <FormControl>
+                            <InputLabel>Name</InputLabel>
                             <Select value={base} onChange={this.handleChange.bind(this)}>
                                 {this.renderMenuItems()}
                             </Select>
+                        </FormControl>
                         </Grid>
                         <Grid item xs={12} sm={6} md={4}>
+                        <FormControl>
                             <FormControlLabel
                                 control={
                                     <Checkbox
@@ -118,8 +120,8 @@ export default class Quotas extends Component<Props, State> {
                                 }
                                 label="Grid View"
                             />
+                        </FormControl>
                         </Grid>
-                    </FormControl>
                 </Grid>
                 <Paper>
                     {base && quotas && isGridView ? (

@@ -3,18 +3,19 @@ import { HttpService } from '../shared/HttpService';
 import { Quota } from '../entities/Quota';
 import {
     Paper,
-    Table,
-    TableHead,
-    TableRow,
-    TableCell,
-    TableBody,
     FormControl,
     InputLabel,
     Select,
     MenuItem,
     Box,
+    Checkbox,
+    FormControlLabel,
+    Grid,
+    Container,
 } from '@material-ui/core';
 import { Rate } from '../entities/Rate';
+import SortableTable from './SortableTable';
+import Cards from './Cards';
 
 interface Props {
     base: string;
@@ -22,12 +23,14 @@ interface Props {
 interface State {
     quotas: Quota;
     base: string;
+    isGridView: boolean;
 }
 
 export default class Quotas extends Component<Props, State> {
     state: State = {
         quotas: new Quota(),
         base: this.props.base,
+        isGridView: true,
     };
 
     static defaultProps = {
@@ -36,12 +39,12 @@ export default class Quotas extends Component<Props, State> {
 
     static GET_QUOTAS_URL = 'latest';
     static headRows = [
-        { id: 'name', numeric: false, disablePadding: true, label: 'Coin' },
+        { id: 'coin', numeric: false, disablePadding: true, label: 'Coin' },
         { id: 'value', numeric: true, disablePadding: false, label: 'Quota' },
     ];
 
     findQuota(base?: string): void {
-        const endpoint = `${base ? Quotas.GET_QUOTAS_URL + `?base=` + base : Quotas.GET_QUOTAS_URL}`;
+        const endpoint = `${Quotas.GET_QUOTAS_URL + `?base=` + base}`;
         HttpService.get(`${endpoint}`).then(res => {
             const data = res.data;
             const rates = Object.entries(data.rates);
@@ -59,9 +62,10 @@ export default class Quotas extends Component<Props, State> {
     }
 
     componentDidMount(): void {
-        this.findQuota();
+        this.findQuota(this.state.base);
     }
 
+    // TODO: Refactor handleChange to remove the findQuota call
     handleChange(event: React.ChangeEvent<{ value: unknown }>): void {
         this.setState(
             {
@@ -69,6 +73,12 @@ export default class Quotas extends Component<Props, State> {
             },
             () => this.findQuota(this.state.base),
         );
+    }
+
+    handleCheckboxChange(event: React.ChangeEvent<HTMLInputElement>): void {
+        this.setState({
+            isGridView: event.target.checked,
+        });
     }
 
     renderMenuItems(): JSX.Element[] {
@@ -82,42 +92,41 @@ export default class Quotas extends Component<Props, State> {
         });
     }
 
-    renderTableRows(): JSX.Element[] {
-        const quotas = this.state.quotas;
-        return quotas.rates.map((row, i) => {
-            return (
-                <TableRow key={i}>
-                    <TableCell component="th" scope="row">
-                        {row.coin}
-                    </TableCell>
-                    <TableCell align="right">{row.value}</TableCell>
-                </TableRow>
-            );
-        });
-    }
-
     render(): JSX.Element {
-        const { base } = this.state;
+        const { base, quotas, isGridView } = this.state;
         return (
             <Box>
-                <form autoComplete="off">
+                <Grid container spacing={3}>
                     <FormControl>
-                        <InputLabel htmlFor="select-multiple">Name</InputLabel>
-                        <Select value={base} onChange={this.handleChange}>
-                            {this.renderMenuItems()}
-                        </Select>
+                        <Grid item xs={12} sm={6} md={4}>
+                            <InputLabel htmlFor="select-multiple">Name</InputLabel>
+                            <Select value={base} onChange={this.handleChange.bind(this)}>
+                                {this.renderMenuItems()}
+                            </Select>
+                        </Grid>
+                        <Grid item xs={12} sm={6} md={4}>
+                            <FormControlLabel
+                                control={
+                                    <Checkbox
+                                        checked={isGridView}
+                                        onChange={this.handleCheckboxChange.bind(this)}
+                                        value="isGridView"
+                                        inputProps={{
+                                            'aria-label': 'primary checkbox',
+                                        }}
+                                    />
+                                }
+                                label="Grid View"
+                            />
+                        </Grid>
                     </FormControl>
-                </form>
+                </Grid>
                 <Paper>
-                    <Table>
-                        <TableHead>
-                            <TableRow>
-                                <TableCell>Coin</TableCell>
-                                <TableCell align="right">Value</TableCell>
-                            </TableRow>
-                        </TableHead>
-                        <TableBody>{this.renderTableRows()}</TableBody>
-                    </Table>
+                    {base && quotas && isGridView ? (
+                        <Cards data={quotas.rates} header={Quotas.headRows} />
+                    ) : (
+                        <SortableTable data={quotas.rates} header={Quotas.headRows} />
+                    )}
                 </Paper>
             </Box>
         );

@@ -22,10 +22,10 @@ export default class App extends Component {
                         </Typography>
                     </Toolbar>
                 </AppBar>
-                <Container maxWidth="sm">
-                    <Box my={4}>
+                <Container maxWidth="lg">
+                    <Box>
                         <Typography variant="h4" component="h1" gutterBottom>
-                            Create React App v4-beta example
+                            Quota Table
                             <Quotas />
                         </Typography>
                     </Box>

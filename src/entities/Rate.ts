@@ -1,6 +1,25 @@
 export class Rate {
     private _coin: string;
     private _value: number;
+    private _flag: string;
+
+
+
+    /**
+     * Getter flag
+     * @return {string}
+     */
+	public get flag(): string {
+		return this._flag;
+	}
+
+    /**
+     * Setter flag
+     * @param {string} value
+     */
+	public set flag(value: string) {
+		this._flag = value;
+	}
 
 
     /**
@@ -36,9 +55,10 @@ export class Rate {
 	}
 
 
-	constructor(coin?: string, value?: number) {
+	constructor(coin?: string, value?: number, flag?: string) {
 		this._coin = coin || '';
-		this._value = value || 0;
+    this._value = value || 0;
+    this._flag = flag || '';
     }    
 
   }

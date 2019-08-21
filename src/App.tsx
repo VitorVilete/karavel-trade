@@ -24,10 +24,7 @@ export default class App extends Component {
                 </AppBar>
                 <Container maxWidth="lg">
                     <Box>
-                        <Typography variant="h4" component="h1" gutterBottom>
-                            Quota Table
-                            <Quotas />
-                        </Typography>
+                        <Quotas />
                     </Box>
                 </Container>
             </Box>

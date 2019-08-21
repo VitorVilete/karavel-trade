@@ -16,6 +16,7 @@ import {
 import { Rate } from '../entities/Rate';
 import SortableTable from './SortableTable';
 import Cards from './Cards';
+import CoinConvert from './CoinConvert';
 
 interface Props {
     base: string;
@@ -96,6 +97,11 @@ export default class Quotas extends Component<Props, State> {
         const { base, quotas, isGridView } = this.state;
         return (
             <Box>
+                <Grid container spacing={3}>
+                    <Grid item xs={12}>                        
+                    <CoinConvert quota={quotas}/>
+                    </Grid>
+                </Grid>
                 <Grid container spacing={3}>
                     <FormControl>
                         <Grid item xs={12} sm={6} md={4}>

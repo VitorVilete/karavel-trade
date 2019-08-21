@@ -106,8 +106,7 @@ export default class Quotas extends Component<Props, State> {
         return (
             <Box>
                 <Grid container spacing={3} justify="space-between">
-                        <Grid item xs={12} sm={6} md={4}>
-                        
+                        <Grid item xs={12} sm={6} md={4}>                        
                         <FormControl>
                             <InputLabel>Name</InputLabel>
                             <Select value={base} onChange={this.handleChange.bind(this)}>
@@ -115,7 +114,7 @@ export default class Quotas extends Component<Props, State> {
                             </Select>
                         </FormControl>
                         </Grid>
-                        <Grid item xs={12} sm={6} md={4}>
+                        <Grid item xs={12} sm={6} md={4} className={'text-align-right'}>
                         <FormControl>
                             <FormControlLabel
                                 control={

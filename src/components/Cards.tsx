@@ -26,7 +26,7 @@ export default class Cards extends Component<Props, State> {
                                     {column.label}
                                 </Typography>
                                 <Typography variant="h5" component="h2">
-                                    {element[column.id.toLowerCase()]}
+                                <div dangerouslySetInnerHTML={{__html: element[column.id.toLowerCase()]}}></div>
                                 </Typography>
                             </Fragment>
                         ))}

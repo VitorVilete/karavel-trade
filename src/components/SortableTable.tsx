@@ -2,7 +2,6 @@ import React, { Component } from 'react';
 import { TableBody, Table, TableHead, TableCell, TableSortLabel, TableRow } from '@material-ui/core';
 import orderBy from 'lodash/orderBy';
 
-// TODO Implement sorting
 interface Props {
     data: any;
     header: Array<Header>;
@@ -52,7 +51,7 @@ export default class SortableTable extends Component<Props, State> {
             <TableRow key={i}>
                 {header.map((column, k) => (
                     <TableCell key={k} align={column.numeric ? 'right' : 'left'}>
-                        {row[column.id.toLowerCase()]}
+                        <div dangerouslySetInnerHTML={{__html: row[column.id.toLowerCase()]}}></div>
                     </TableCell>
                 ))}
             </TableRow>
@@ -84,7 +83,6 @@ export default class SortableTable extends Component<Props, State> {
     render(): JSX.Element {
         const { columnToSort, sortDirection } = this.state;
         const { data, header } = this.props;
-        console.log(columnToSort, sortDirection);
         return (
             <Table>
                 <TableHead>

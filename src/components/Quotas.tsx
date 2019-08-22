@@ -11,13 +11,10 @@ import {
     Checkbox,
     FormControlLabel,
     Grid,
-    Container,
 } from '@material-ui/core';
 import { Rate } from '../entities/Rate';
 import SortableTable from './SortableTable';
 import Cards from './Cards';
-import CoinConvert from './CoinConvert';
-
 interface Props {
     base: string;
 }
@@ -31,7 +28,7 @@ export default class Quotas extends Component<Props, State> {
     state: State = {
         quotas: new Quota(),
         base: this.props.base,
-        isGridView: true,
+        isGridView: false,
     };
 
     static defaultProps = {
@@ -40,7 +37,7 @@ export default class Quotas extends Component<Props, State> {
 
     static GET_QUOTAS_URL = 'latest';
     static headRows = [
-        { id: 'coin', numeric: false, disablePadding: true, label: 'Coin' },
+        { id: 'flag', numeric: false, disablePadding: false, label: 'Coin' },
         { id: 'value', numeric: true, disablePadding: false, label: 'Quota' },
     ];
 
@@ -57,7 +54,7 @@ export default class Quotas extends Component<Props, State> {
             const result = new Quota(data.base, data.date, formattedRates);
 
             this.setState({
-                quotas: result,
+                quotas: this.setRatesWithFlags(result),
             });
         });
     }
@@ -93,24 +90,29 @@ export default class Quotas extends Component<Props, State> {
         });
     }
 
+    setRatesWithFlags(quota: Quota): Quota {
+        quota.rates.forEach(rate => {
+            rate.flag =
+                '<span class="flag-icon flag-icon-' + rate.coin.substring(0, 2).toLowerCase() + '"></span>' + rate.coin;
+        });
+        return quota;
+    }
+
     render(): JSX.Element {
         const { base, quotas, isGridView } = this.state;
         return (
             <Box>
-                <Grid container spacing={3}>
-                    <Grid item xs={12}>                        
-                    <CoinConvert quota={quotas}/>
-                    </Grid>
-                </Grid>
-                <Grid container spacing={3}>
-                    <FormControl>
-                        <Grid item xs={12} sm={6} md={4}>
-                            <InputLabel htmlFor="select-multiple">Name</InputLabel>
+                <Grid container spacing={3} justify="space-between">
+                    <Grid item xs={12} sm={6} md={4}>
+                        <FormControl>
+                            <InputLabel>Name</InputLabel>
                             <Select value={base} onChange={this.handleChange.bind(this)}>
                                 {this.renderMenuItems()}
                             </Select>
-                        </Grid>
-                        <Grid item xs={12} sm={6} md={4}>
+                        </FormControl>
+                    </Grid>
+                    <Grid item xs={12} sm={6} md={4} className={'text-align-right'}>
+                        <FormControl>
                             <FormControlLabel
                                 control={
                                     <Checkbox
@@ -124,16 +126,17 @@ export default class Quotas extends Component<Props, State> {
                                 }
                                 label="Grid View"
                             />
-                        </Grid>
-                    </FormControl>
+                        </FormControl>
+                    </Grid>
                 </Grid>
-                <Paper>
-                    {base && quotas && isGridView ? (
-                        <Cards data={quotas.rates} header={Quotas.headRows} />
-                    ) : (
+
+                {base && quotas && isGridView ? (
+                    <Cards data={quotas.rates} header={Quotas.headRows} />
+                ) : (
+                    <Paper>
                         <SortableTable data={quotas.rates} header={Quotas.headRows} />
-                    )}
-                </Paper>
+                    </Paper>
+                )}
             </Box>
         );
     }

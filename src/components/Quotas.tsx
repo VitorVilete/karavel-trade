@@ -15,18 +15,19 @@ import {
 import { Rate } from '../entities/Rate';
 import SortableTable from './SortableTable';
 import Cards from './Cards';
+import CoinConvert from './CoinConvert';
 interface Props {
     base: string;
 }
 interface State {
-    quotas: Quota;
+    quota: Quota;
     base: string;
     isGridView: boolean;
 }
 
 export default class Quotas extends Component<Props, State> {
     state: State = {
-        quotas: new Quota(),
+        quota: new Quota(),
         base: this.props.base,
         isGridView: false,
     };
@@ -54,7 +55,7 @@ export default class Quotas extends Component<Props, State> {
             const result = new Quota(data.base, data.date, formattedRates);
 
             this.setState({
-                quotas: this.setRatesWithFlags(result),
+                quota: this.setRatesWithFlags(result),
             });
         });
     }
@@ -80,8 +81,8 @@ export default class Quotas extends Component<Props, State> {
     }
 
     renderMenuItems(): JSX.Element[] {
-        const quotas = this.state.quotas;
-        return quotas.rates.map((row, i) => {
+        const quota = this.state.quota;
+        return quota.rates.map((row, i) => {
             return (
                 <MenuItem value={row.coin} key={i}>
                     {row.coin}
@@ -99,19 +100,25 @@ export default class Quotas extends Component<Props, State> {
     }
 
     render(): JSX.Element {
-        const { base, quotas, isGridView } = this.state;
+        const { base, quota, isGridView } = this.state;
         return (
             <Box>
+                {base && quota.rates.length > 0 && (
+                    <Grid container>
+                        <CoinConvert quota={quota} />
+                    </Grid>
+                )}
+
                 <Grid container spacing={3} justify="space-between">
-                    <Grid item xs={12} sm={6} md={4}>
+                    <Grid item xs={6}>
                         <FormControl>
-                            <InputLabel>Name</InputLabel>
+                            <InputLabel>Coin</InputLabel>
                             <Select value={base} onChange={this.handleChange.bind(this)}>
                                 {this.renderMenuItems()}
                             </Select>
                         </FormControl>
                     </Grid>
-                    <Grid item xs={12} sm={6} md={4} className={'text-align-right'}>
+                    <Grid item xs={6} className={'text-align-right'}>
                         <FormControl>
                             <FormControlLabel
                                 control={
@@ -130,11 +137,11 @@ export default class Quotas extends Component<Props, State> {
                     </Grid>
                 </Grid>
 
-                {base && quotas && isGridView ? (
-                    <Cards data={quotas.rates} header={Quotas.headRows} />
+                {base && quota.rates.length > 0 && isGridView ? (
+                    <Cards data={quota.rates} header={Quotas.headRows} />
                 ) : (
                     <Paper>
-                        <SortableTable data={quotas.rates} header={Quotas.headRows} />
+                        <SortableTable data={quota.rates} header={Quotas.headRows} />
                     </Paper>
                 )}
             </Box>

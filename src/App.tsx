@@ -15,7 +15,7 @@ export default class App extends Component {
     render(): JSX.Element {
         return (
             <Box>
-                <AppBar position="static" color="default">
+                <AppBar position="static" color="primary">
                     <Toolbar>
                         <Typography variant="h6" color="inherit">
                             Karavel

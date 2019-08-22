@@ -107,8 +107,8 @@ export default class Quotas extends Component<Props, State> {
 
                 {base && quota.rates.length > 0 && (
                     <Box my={5}>
-                        <Grid container>
-                            <Grid item xs={12}>
+                        <Grid container justify="center">
+                            <Grid item xs={12} md={10}>
                                 <Paper>
                                     <CoinConvert quota={quota} />
                                 </Paper>

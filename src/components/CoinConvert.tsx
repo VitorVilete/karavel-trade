@@ -48,10 +48,13 @@ export default class CoinConvert extends Component<Props, State> {
     }
 
     handleChange(event: React.SyntheticEvent): void {
+        const regex = /^[0-9\b]+$/;
         const { name, value } = event.currentTarget as HTMLInputElement;
-        this.setState({
-            [name]: value as any
-        } as Pick<State, "quota" | "quantity" | "selectedRate">);
+        if (value === '' || regex.test(value)) {
+            this.setState({
+                [name]: value as any
+            } as Pick<State, "quota" | "quantity" | "selectedRate">);
+        }
     }
 
     handleSelectChange(event: React.ChangeEvent<{ value: unknown }>): void {
@@ -69,7 +72,7 @@ export default class CoinConvert extends Component<Props, State> {
                     Rate calculator
                 </Typography>
                 <Grid container spacing={3}>
-                    <Grid item xs={12} sm={6}>
+                    <Grid item xs={12} sm={2}>
                         <TextField
                             disabled
                             id="baseValue"
@@ -78,15 +81,7 @@ export default class CoinConvert extends Component<Props, State> {
                             value={quota.base}
                         />
                     </Grid>
-                    <Grid item xs={12} sm={6}>
-                        <FormControl>
-                            <InputLabel>Coin</InputLabel>
-                            <Select value={selectedRate} onChange={this.handleSelectChange.bind(this)}>
-                                {this.renderMenuItems()}
-                            </Select>
-                        </FormControl>
-                    </Grid>
-                    <Grid item xs={12} sm={6}>
+                    <Grid item xs={12} sm={2}>
                         <TextField
                             id="quantity"
                             name="quantity"
@@ -96,8 +91,19 @@ export default class CoinConvert extends Component<Props, State> {
                             onChange={this.handleChange.bind(this)}
                         />
                     </Grid>
-                    <Grid item xs={12} sm={6}>
-                        <TextField id="result" name="result" label="Result" value={this.calculate()} />
+                    <Grid item xs={12} sm={4}>
+                        <FormControl>
+                            <InputLabel>Coin</InputLabel>
+                            <Select value={selectedRate} onChange={this.handleSelectChange.bind(this)}>
+                                {this.renderMenuItems()}
+                            </Select>
+                        </FormControl>
+                    </Grid>
+
+                    <Grid item xs={12}>
+                        <Typography variant="h6" color="inherit">
+                            Result: {this.calculate()}
+                        </Typography>
                     </Grid>
                 </Grid>
             </React.Fragment>

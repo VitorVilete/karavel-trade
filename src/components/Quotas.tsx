@@ -11,6 +11,7 @@ import {
     Checkbox,
     FormControlLabel,
     Grid,
+    Typography,
 } from '@material-ui/core';
 import { Rate } from '../entities/Rate';
 import SortableTable from './SortableTable';
@@ -103,47 +104,58 @@ export default class Quotas extends Component<Props, State> {
         const { base, quota, isGridView } = this.state;
         return (
             <Box>
-                {base && quota.rates.length > 0 && (
-                    <Grid container>
-                        <CoinConvert quota={quota} />
-                    </Grid>
-                )}
 
-                <Grid container spacing={3} justify="space-between">
-                    <Grid item xs={6}>
-                        <FormControl>
-                            <InputLabel>Coin</InputLabel>
-                            <Select value={base} onChange={this.handleChange.bind(this)}>
-                                {this.renderMenuItems()}
-                            </Select>
-                        </FormControl>
+                {base && quota.rates.length > 0 && (
+                    <Box my={5}>
+                        <Grid container>
+                            <Grid item xs={12}>
+                                <Paper>
+                                    <CoinConvert quota={quota} />
+                                </Paper>
+                            </Grid>
+                        </Grid>
+                    </Box>
+                )}
+                <Box py={5}>
+                    <Typography variant="h6" color="inherit">
+                        Rates table
+                    </Typography>
+                    <Grid container spacing={3} justify="space-between">
+                        <Grid item xs={6}>
+                            <FormControl>
+                                <InputLabel>Coin</InputLabel>
+                                <Select value={base} onChange={this.handleChange.bind(this)}>
+                                    {this.renderMenuItems()}
+                                </Select>
+                            </FormControl>
+                        </Grid>
+                        <Grid item xs={6} className={'text-align-right'}>
+                            <FormControl>
+                                <FormControlLabel
+                                    control={
+                                        <Checkbox
+                                            checked={isGridView}
+                                            onChange={this.handleCheckboxChange.bind(this)}
+                                            value="isGridView"
+                                            inputProps={{
+                                                'aria-label': 'primary checkbox',
+                                            }}
+                                        />
+                                    }
+                                    label="Grid View"
+                                />
+                            </FormControl>
+                        </Grid>
                     </Grid>
-                    <Grid item xs={6} className={'text-align-right'}>
-                        <FormControl>
-                            <FormControlLabel
-                                control={
-                                    <Checkbox
-                                        checked={isGridView}
-                                        onChange={this.handleCheckboxChange.bind(this)}
-                                        value="isGridView"
-                                        inputProps={{
-                                            'aria-label': 'primary checkbox',
-                                        }}
-                                    />
-                                }
-                                label="Grid View"
-                            />
-                        </FormControl>
-                    </Grid>
-                </Grid>
+                </Box>
 
                 {base && quota.rates.length > 0 && isGridView ? (
                     <Cards data={quota.rates} header={Quotas.headRows} />
                 ) : (
-                    <Paper>
-                        <SortableTable data={quota.rates} header={Quotas.headRows} />
-                    </Paper>
-                )}
+                        <Paper>
+                            <SortableTable data={quota.rates} header={Quotas.headRows} />
+                        </Paper>
+                    )}
             </Box>
         );
     }

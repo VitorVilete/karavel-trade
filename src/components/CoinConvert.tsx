@@ -8,7 +8,6 @@ interface Props {
 interface State {
     quota: Quota;
     quantity: number;
-    result: number;
     selectedRate: string;
 }
 
@@ -16,9 +15,18 @@ export default class CoinConvert extends Component<Props, State> {
     state: State = {
         quota: this.props.quota,
         quantity: 1,
-        result: 1,
         selectedRate: this.props.quota.base,
     };
+
+    componentDidUpdate(oldProps: Props) {
+        const newProps: Props = this.props;
+        if (oldProps.quota !== newProps.quota) {
+            this.setState({
+                quota: newProps.quota,
+                selectedRate: newProps.quota.base,
+            })
+        }
+    }
 
     renderMenuItems(): JSX.Element[] {
         const quota = this.state.quota;
@@ -31,23 +39,34 @@ export default class CoinConvert extends Component<Props, State> {
         });
     }
 
-    calculate(event: React.ChangeEvent<{ value: unknown }>): void {
+    calculate = (): number => {
         const { quota, quantity, selectedRate } = this.state;
         const coinIndex = quota.rates.findIndex(rate => rate.coin === selectedRate);
 
         const result: number = quota.rates[coinIndex].value * quantity;
+        return result
+    }
+
+    handleChange(event: React.SyntheticEvent): void {
+        const { name, value } = event.currentTarget as HTMLInputElement;
         this.setState({
-            result: result,
-            selectedRate: event.target.value as string,
-        });
+            [name]: value as any
+        } as Pick<State, "quota" | "quantity" | "selectedRate">);
+    }
+
+    handleSelectChange(event: React.ChangeEvent<{ value: unknown }>): void {
+        this.setState(
+            {
+                selectedRate: event.target.value as string,
+            });
     }
 
     render(): JSX.Element {
-        const { quota, result, selectedRate } = this.state;
+        const { quota, selectedRate, quantity } = this.state;
         return (
             <React.Fragment>
                 <Typography variant="h6" gutterBottom>
-                    Quota calculator
+                    Rate calculator
                 </Typography>
                 <Grid container spacing={3}>
                     <Grid item xs={12} sm={6}>
@@ -57,29 +76,28 @@ export default class CoinConvert extends Component<Props, State> {
                             name="baseValue"
                             label="Base value"
                             value={quota.base}
-                            fullWidth
                         />
                     </Grid>
                     <Grid item xs={12} sm={6}>
                         <FormControl>
                             <InputLabel>Coin</InputLabel>
-                            <Select value={selectedRate} onChange={this.calculate.bind(this)}>
+                            <Select value={selectedRate} onChange={this.handleSelectChange.bind(this)}>
                                 {this.renderMenuItems()}
                             </Select>
                         </FormControl>
                     </Grid>
                     <Grid item xs={12} sm={6}>
                         <TextField
-                            required
                             id="quantity"
                             name="quantity"
                             label="Quantity"
-                            fullWidth
-                            onChange={this.calculate.bind(this)}
+                            defaultValue="1"
+                            value={quantity}
+                            onChange={this.handleChange.bind(this)}
                         />
                     </Grid>
                     <Grid item xs={12} sm={6}>
-                        <TextField required id="result" name="result" label="Result" value={result} fullWidth />
+                        <TextField id="result" name="result" label="Result" value={this.calculate()} />
                     </Grid>
                 </Grid>
             </React.Fragment>

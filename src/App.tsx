@@ -15,7 +15,7 @@ export default class App extends Component {
     render(): JSX.Element {
         return (
             <Box>
-                <AppBar position="static" color="default">
+                <AppBar position="static" color="primary">
                     <Toolbar>
                         <Typography variant="h6" color="inherit">
                             Karavel
@@ -24,10 +24,7 @@ export default class App extends Component {
                 </AppBar>
                 <Container maxWidth="lg">
                     <Box>
-                        <Typography variant="h4" component="h1" gutterBottom>
-                            Quota Table
-                            <Quotas />
-                        </Typography>
+                        <Quotas />
                     </Box>
                 </Container>
             </Box>
